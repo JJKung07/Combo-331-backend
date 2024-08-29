@@ -1,6 +1,9 @@
 package se331.lab.rest.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import se331.lab.entity.Event;
 
 import jakarta.annotation.PostConstruct;
@@ -59,7 +62,6 @@ public class EventController {
                 .petAllowed(true)
                 .organizer("Dawg Dahd")
                 .build());
-
         eventsList.add(Event.builder()
                 .id(1002L)
                 .category("food")
@@ -71,7 +73,6 @@ public class EventController {
                 .petAllowed(true)
                 .organizer("Kahn Opiner")
                 .build());
-
         eventsList.add(Event.builder()
                 .id(1003L)
                 .category("sustainability")
@@ -83,5 +84,22 @@ public class EventController {
                 .petAllowed(false)
                 .organizer("Brody Kill")
                 .build());
+    }
+
+    @GetMapping("events")
+    public ResponseEntity<?> getEvents(@RequestParam(value = "_limit", required = false) Integer perPage
+            ,@RequestParam(value = "_page",required = false)Integer page) {
+        perPage = perPage == null?eventsList.size():perPage;
+        page = page == null?1:page;
+        Integer firstIndex = (page-1)*perPage;
+        List<Event> output = new ArrayList<>();
+        try {
+            for (int i = firstIndex; i < firstIndex+perPage; i++) {
+                output.add(eventsList.get(i));
+            }
+            return ResponseEntity.ok(output);
+        } catch (IndexOutOfBoundsException ex) {
+            return ResponseEntity.ok(ex.getMessage());
+        }
     }
 }
