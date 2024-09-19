@@ -1,8 +1,10 @@
 package se331.lab.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import se331.lab.dao.OrganizerDao;
+import se331.lab.entity.Event;
 import se331.lab.entity.Organizer;
 
 import java.util.List;
@@ -18,7 +20,7 @@ public class OrganizerServiceImpl implements OrganizerService{
     }
 
     @Override
-    public List<Organizer> getOrganizers(Integer pagesize, Integer page) {
+    public Page<Organizer> getOrganizers(Integer pagesize, Integer page) {
         return organizerDao.getOrganizers(pagesize, page);
     }
 
@@ -27,5 +29,8 @@ public class OrganizerServiceImpl implements OrganizerService{
         return organizerDao.getOrganizer(id);
     }
 
-
+    @Override
+    public Organizer save(Organizer organizer) {
+        return organizerDao.save(organizer);
+    }
 }
