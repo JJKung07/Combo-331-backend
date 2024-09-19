@@ -5,9 +5,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import se331.lab.entity.Event;
 
@@ -16,6 +14,8 @@ import se331.lab.service.EventService;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.springframework.beans.support.PagedListHolder.DEFAULT_PAGE_SIZE;
 
 @Controller
 
@@ -29,13 +29,16 @@ public class EventController {
     }
 
     @GetMapping("events")
-    public ResponseEntity<?> getEvents(@RequestParam(value = "_limit", required = false) Integer perPage
-            ,@RequestParam(value = "_page",required = false)Integer page) {
+    public ResponseEntity<?> getEventLists(
+            @RequestParam(value = "_limit", required = false) Integer perPage,
+            @RequestParam(value = "_page", required = false) Integer page) {
+        // Ensure perPage has a default value if null (if needed)
+        perPage = perPage != null ? perPage : DEFAULT_PAGE_SIZE;
+
         Page<Event> pageOutput = eventService.getEvents(perPage, page);
-        HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set("x-total-count",
-                String.valueOf(pageOutput.getTotalElements()));
-        return new ResponseEntity<>(pageOutput.getContent(), responseHeaders, HttpStatus.OK);
+        HttpHeaders responseHeader = new HttpHeaders();
+        responseHeader.set("x-total-count", String.valueOf(pageOutput.getTotalElements()));
+        return new ResponseEntity<>(pageOutput.getContent(), responseHeader, HttpStatus.OK);
     }
 
     @GetMapping("events/{id}")
@@ -46,5 +49,11 @@ public class EventController {
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id does not exist.");
         }
+    }
+
+    @PostMapping("/events")
+    public ResponseEntity<?> addEvent(@RequestBody Event event){
+        Event output = eventService.save(event);
+        return ResponseEntity.ok(output);
     }
 }

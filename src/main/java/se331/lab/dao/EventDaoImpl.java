@@ -104,4 +104,11 @@ public class EventDaoImpl implements EventDao {
     public Event getEvent(Long id) {
         return eventsList.stream().filter(e -> e.getId().equals(id)).findFirst().orElse(null);
     }
+
+    @Override
+    public Event save(Event event) {
+        event.setId(eventsList.get(eventsList.size()-1).getId()+1);
+        eventsList.add(event);
+        return event;
+    }
 }
