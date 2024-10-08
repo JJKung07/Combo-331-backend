@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import se331.lab.dao.EventDao;
 import se331.lab.dao.OrganizerDao;
@@ -41,5 +42,10 @@ public class EventServicelmpl implements EventService {
         event.setOrganizer(organizer);
         organizer.getOwnEvents().add(event);
         return eventDao.save(event);
+    }
+
+    @Override
+    public Page<Event> getEvents(String title, Pageable pageable) {
+        return eventDao.getEvents(title, pageable);
     }
 }
