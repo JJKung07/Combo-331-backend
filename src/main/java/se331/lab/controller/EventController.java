@@ -1,5 +1,6 @@
 package se331.lab.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import se331.lab.entity.Event;
 
 import jakarta.annotation.PostConstruct;
 import se331.lab.service.EventService;
+import se331.lab.util.LabMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,15 +20,9 @@ import java.util.List;
 import static org.springframework.beans.support.PagedListHolder.DEFAULT_PAGE_SIZE;
 
 @Controller
-
+@RequiredArgsConstructor
 public class EventController {
-
-
     final EventService eventService;
-
-    public EventController(EventService eventService) {
-        this.eventService = eventService;
-    }
 
     @GetMapping("events")
     public ResponseEntity<?> getEventLists(
@@ -38,22 +34,23 @@ public class EventController {
         Page<Event> pageOutput = eventService.getEvents(perPage, page);
         HttpHeaders responseHeader = new HttpHeaders();
         responseHeader.set("x-total-count", String.valueOf(pageOutput.getTotalElements()));
-        return new ResponseEntity<>(pageOutput.getContent(), responseHeader, HttpStatus.OK);
+        return new ResponseEntity<>(LabMapper.INSTANCE.getEventDto(pageOutput.getContent()), responseHeader, HttpStatus.OK);
     }
 
+
     @GetMapping("events/{id}")
-    public ResponseEntity<?> getEvent(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getEvent(@PathVariable("id") Long id){
         Event output = eventService.getEvent(id);
-        if (output != null) {
-            return ResponseEntity.ok(output);
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id does not exist.");
+        if (output != null){
+            return ResponseEntity.ok(LabMapper.INSTANCE.getEventDto(output));
+        }else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
         }
     }
 
     @PostMapping("/events")
     public ResponseEntity<?> addEvent(@RequestBody Event event){
         Event output = eventService.save(event);
-        return ResponseEntity.ok(output);
+        return ResponseEntity.ok(LabMapper.INSTANCE.getEventDto(output));
     }
 }

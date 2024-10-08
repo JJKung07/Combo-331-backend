@@ -1,24 +1,19 @@
 package se331.lab.dao;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import se331.lab.Repository.EventRepository;
 import se331.lab.entity.Event;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import se331.lab.repository.EventRepository;
 
 @Repository
 @RequiredArgsConstructor
 @Profile("db")
 public class EventDaoDbImpl implements EventDao {
     final EventRepository eventRepository;
-
     @Override
     public Integer getEventSize() {
         return Math.toIntExact(eventRepository.count());
@@ -26,11 +21,7 @@ public class EventDaoDbImpl implements EventDao {
 
     @Override
     public Page<Event> getEvents(Integer pageSize, Integer page) {
-        // Provide default values if pageSize or page are null
-        int size = Optional.ofNullable(pageSize).orElse(10); // Default to 10 items per page
-        int pageNumber = Optional.ofNullable(page).orElse(1) - 1; // Default to page 0 if null
-        Pageable pageable = PageRequest.of(pageNumber, size);
-        return eventRepository.findAll(pageable);
+        return eventRepository.findAll(PageRequest.of(page != null ? page - 1 : 0, pageSize));
     }
 
     @Override

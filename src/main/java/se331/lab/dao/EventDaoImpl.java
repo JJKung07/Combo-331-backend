@@ -14,45 +14,42 @@ import java.util.List;
 @Repository
 @Profile("manual")
 public class EventDaoImpl implements EventDao {
-    List<Event> eventsList;
+    List<Event> eventList;
 
     @PostConstruct
     public void init() {
-        eventsList = new ArrayList<>();
-        eventsList.add(Event.builder()
+        eventList = new ArrayList<>();
+        eventList.add(Event.builder()
                 .id(123L)
                 .category("animal welfare")
                 .title("Cat Adoption Day")
-                .description("Find your new feline at this event.")
+                .description("Find your new feline friend at this event.")
                 .location("Meow Town")
                 .date("January 28, 2022")
                 .time("12:00")
                 .petAllowed(true)
-                .organizer("Kat Laydee")
                 .build());
-        eventsList.add(Event.builder()
+        eventList.add(Event.builder()
                 .id(456L)
                 .category("food")
                 .title("Community Gardening")
                 .description("Join us as we tend to the community edible plants.")
                 .location("Flora City")
                 .date("March 14, 2022")
-                .time("10.00")
+                .time("10:00")
                 .petAllowed(true)
-                .organizer("Fern Pollin")
                 .build());
-        eventsList.add(Event.builder()
+        eventList.add(Event.builder()
                 .id(789L)
                 .category("sustainability")
                 .title("Beach Cleanup")
                 .description("Help pick up trash along the shore.")
                 .location("Playa Del Carmen")
                 .date("July 22, 2022")
-                .time("11.00")
+                .time("11:00")
                 .petAllowed(false)
-                .organizer("Carey Wales")
                 .build());
-        eventsList.add(Event.builder()
+        eventList.add(Event.builder()
                 .id(1001L)
                 .category("animal welfare")
                 .title("Dog Adoption Day")
@@ -61,9 +58,8 @@ public class EventDaoImpl implements EventDao {
                 .date("August 28, 2022")
                 .time("12:00")
                 .petAllowed(true)
-                .organizer("Dawg Dahd")
                 .build());
-        eventsList.add(Event.builder()
+        eventList.add(Event.builder()
                 .id(1002L)
                 .category("food")
                 .title("Canned Food Drive")
@@ -72,9 +68,8 @@ public class EventDaoImpl implements EventDao {
                 .date("September 14, 2022")
                 .time("3:00")
                 .petAllowed(true)
-                .organizer("Kahn Opiner")
                 .build());
-        eventsList.add(Event.builder()
+        eventList.add(Event.builder()
                 .id(1003L)
                 .category("sustainability")
                 .title("Highway Cleanup")
@@ -83,32 +78,31 @@ public class EventDaoImpl implements EventDao {
                 .date("July 22, 2022")
                 .time("11:00")
                 .petAllowed(false)
-                .organizer("Brody Kill")
                 .build());
     }
 
     @Override
     public Integer getEventSize() {
-        return eventsList.size();
+        return eventList.size();
     }
 
     @Override
     public Page<Event> getEvents(Integer pageSize, Integer page) {
-        pageSize = pageSize == null ? eventsList.size() : pageSize;
+        pageSize = pageSize == null ? eventList.size() : pageSize;
         page = page == null ? 1 : page;
         int firstIndex = (page - 1) * pageSize;
-        return new PageImpl<Event>(eventsList.subList(firstIndex,firstIndex+pageSize), PageRequest.of(page,pageSize),eventsList.size());
+        return new PageImpl<Event>(eventList.subList(firstIndex,firstIndex+pageSize), PageRequest.of(page,pageSize),eventList.size());
     }
 
     @Override
     public Event getEvent(Long id) {
-        return eventsList.stream().filter(e -> e.getId().equals(id)).findFirst().orElse(null);
+        return eventList.stream().filter(event -> event.getId().equals(id)).findFirst().orElse(null);
     }
 
     @Override
     public Event save(Event event) {
-        event.setId(eventsList.get(eventsList.size()-1).getId()+1);
-        eventsList.add(event);
+        event.setId(eventList.get(eventList.size()-1).getId()+1);
+        eventList.add(event);
         return event;
     }
 }
