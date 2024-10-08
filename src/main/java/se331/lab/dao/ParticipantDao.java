@@ -7,6 +7,6 @@ import se331.lab.entity.Participant;
 import java.util.Optional;
 
 public interface ParticipantDao {
-    Page<Participant> getParticipants(Pageable pageable);
+    Page<Participant> getParticipant(Pageable pageRequest);
     Optional<Participant> findById(Long id);
 }

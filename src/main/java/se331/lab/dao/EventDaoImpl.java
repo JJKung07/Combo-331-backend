@@ -12,8 +12,8 @@ import se331.lab.repository.EventRepository;
 
 @Repository
 @RequiredArgsConstructor
-@Profile("db")
-public class EventDaoDbImpl implements EventDao {
+@Profile("manual")
+public class EventDaoImpl implements EventDao {
     final EventRepository eventRepository;
 
     @Override
@@ -28,7 +28,7 @@ public class EventDaoDbImpl implements EventDao {
 
     @Override
     public Page<Event> getEvents(String title, String description, Pageable page) {
-        return null;
+        return eventRepository.findByTitleContainingOrDescriptionContaining(title, description, page);
     }
 
     @Override

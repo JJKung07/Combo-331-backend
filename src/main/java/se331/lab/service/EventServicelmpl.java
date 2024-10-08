@@ -3,6 +3,7 @@ package se331.lab.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -40,12 +41,18 @@ public class EventServicelmpl implements EventService {
     public Event save(Event event) {
         Organizer organizer = organizerDao.findById(event.getOrganizer().getId()).orElse(null);
         event.setOrganizer(organizer);
+        assert organizer != null;
         organizer.getOwnEvents().add(event);
         return eventDao.save(event);
     }
 
     @Override
-    public Page<Event> getEvents(String title, Pageable pageable) {
-        return eventDao.getEvents(title, pageable);
+    public Page<Event> getEvents(String title, String description, Pageable pageable) {
+        return eventDao.getEvents(title, description, pageable);
+    }
+
+    @Override
+    public Page<Event> getEventsAnd(String title, String description, Pageable pageable) {
+        return eventDao.getEventsAnd(title, description, pageable);
     }
 }

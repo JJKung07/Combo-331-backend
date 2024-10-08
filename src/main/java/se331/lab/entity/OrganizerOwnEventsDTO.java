@@ -22,3 +22,4 @@ public class OrganizerOwnEventsDTO {
     Boolean petAllowed;
     List<Participant> participants;
 }
+

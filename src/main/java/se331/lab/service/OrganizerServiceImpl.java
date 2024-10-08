@@ -24,3 +24,4 @@ public class OrganizerServiceImpl implements OrganizerService{
         return organizerDao.getOrganizer(PageRequest.of(page, pageSize));
     }
 }
+

@@ -16,3 +16,4 @@ public class OrganizerController {
         return ResponseEntity.ok(LabMapper.INSTANCE.getOrganizerDTO(organizerService.getAllOrganizer()));
     }
 }
+

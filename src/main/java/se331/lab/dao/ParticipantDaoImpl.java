@@ -11,11 +11,11 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class ParticipantDaoImpl implements ParticipantDao {
+public class ParticipantDaoImpl implements ParticipantDao{
     final ParticipantRepository participantRepository;
     @Override
-    public Page<Participant> getParticipants(Pageable pageable) {
-        return participantRepository.findAll(pageable);
+    public Page<Participant> getParticipant(Pageable pageRequest) {
+        return participantRepository.findAll(pageRequest);
     }
 
     @Override
@@ -23,3 +23,4 @@ public class ParticipantDaoImpl implements ParticipantDao {
         return participantRepository.findById(id);
     }
 }
+
