@@ -22,75 +22,68 @@ import java.util.Date;
 public class CloudStorageHelper {
     private static Storage storage = null;
     static {
-        InputStream serviceAccount =
-                null;
+
+        InputStream serviceAccount = null;
         try {
             serviceAccount = new ClassPathResource("key.json").getInputStream();
-                storage = StorageOptions.newBuilder()
-                        .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                        .setProjectId("imageupload-8d680")
-                        .build().getService();
+            storage = StorageOptions.newBuilder().setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                    .setProjectId("imageupload-8d680")
+                    .build().getService();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    // End init
-    public String uploadFile(MultipartFile filepart, final String bucketname) throws IOException {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    // [END init]
+    public String uploadFile(MultipartFile filePart, final String bucketName) throws IOException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HHmmssSSS");
         String dtString = sdf.format(new Date());
-        final String fileName = dtString + "-" + filepart.getOriginalFilename();
-        InputStream is = filepart.getInputStream();
+        final String fileName = dtString + "-" + filePart.getOriginalFilename();
+        InputStream is = filePart.getInputStream();
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         byte[] readBuf = new byte[4096];
         while (is.available() > 0) {
             int bytesRead = is.read(readBuf);
             os.write(readBuf, 0, bytesRead);
         }
-        // Convert ByteArrayOutputStream into Bute[]
-        BlobInfo blobInfo =
-                storage.create(
-                        BlobInfo
-                                .newBuilder(bucketname, fileName)
-                        // Modify access list to allow all user with link to read file
-                                .setAcl(new
-                                        ArrayList<>(Arrays.asList(Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER))))
-                                .setContentType(filepart.getContentType())
-                                .build(),
-                        os.toByteArray());
+        // Convert ByteArrayOutputStream into byte[]
+        BlobInfo blobInfo = storage.create(BlobInfo.newBuilder(bucketName, fileName).setAcl(new ArrayList<>(Arrays.asList(Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER))))
+                        .setContentType(filePart.getContentType()).build(),
+                os.toByteArray());
+        // return the public download link
         return blobInfo.getMediaLink();
     }
-        public String getImageUrl(MultipartFile file, String bucket) throws IOException, ServletException {
-            final String fileName = file.getOriginalFilename();
-            // Check extension of file
-            if (fileName != null && !fileName.isEmpty() && fileName.contains(".")) {
-                final String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
-                String[] allowedExt = {"jpg", "jpeg", "png", "gif"};
-                for (String s : allowedExt) {
-                    if (extension.equals(s)) {
-                        return uploadFile(file, bucket);
-                    }
-                }
-                throw new ServletException("file must be image");
-            }
-            return null;
-        }
-        public StorageFileDto getStorageFileDto(MultipartFile file, final String bucket) throws IOException, ServletException {
+    public String getImageUrl(MultipartFile file, final String bucket) throws IOException, ServletException {
         final String fileName = file.getOriginalFilename();
         // Check extension of file
-            if (fileName != null && !fileName.isEmpty() && fileName.contains(".")) {
-                final String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
-                String[] allowedExt = {"jpg", "jpeg", "png", "gif"};
-                for (String s : allowedExt) {
-                    if (extension.equals(s)) {
-                        String urlName = uploadFile(file, bucket);
-                        return StorageFileDto.builder()
-                                .name(urlName)
-                                .build();
-                    }
+        if (fileName != null && !fileName.isEmpty() && fileName.contains("."))
+        {
+            final String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
+            String[] allowedExt = {"jpg", "jpeg", "png", "gif"};
+            for (String s : allowedExt) {
+                if (extension.equals(s)) {
+                    return this.uploadFile(file, bucket);
                 }
-                throw new ServletException("file must be an image");
             }
-            return null;
+            throw new ServletException("file must be an image");
         }
-
+        return null;
+    }
+    public StorageFileDto getStorageFileDto(MultipartFile file, final String bucket) throws IOException, ServletException {
+        final String fileName = file.getOriginalFilename();
+        // Check extension file
+        if (fileName != null && !fileName.isEmpty() && fileName.contains(".")) {
+            final String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
+            String[] allowedExt = {"jpg", "jpeg", "png", "gif"};
+            for (String s : allowedExt) {
+                if (extension.equals(s)) {
+                    String urlName = this.uploadFile(file, bucket);
+                    return StorageFileDto.builder()
+                            .name(urlName)
+                            .build();
+                }
+            }
+            throw new ServletException("file must be an image");
+        }
+        return null;
+    }
 }

@@ -77,7 +77,6 @@
 			<artifactId>google-cloud-storage</artifactId>
 			<version>2.43.2</version>
 		</dependency>
-
 	</dependencies>
 
 	<build>

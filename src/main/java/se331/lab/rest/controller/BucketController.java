@@ -16,14 +16,12 @@ import java.io.IOException;
 public class BucketController {
     final CloudStorageHelper cloudStorageHelper;
     @PostMapping("/uploadFile")
-    public ResponseEntity<?> uploadFile(@RequestPart(value = "file")
-                                        MultipartFile file) throws IOException, ServletException {
-        return
-                ResponseEntity.ok(this.cloudStorageHelper.getImageUrl(file,"imageupload-8d680.appspot.com"));
+    public ResponseEntity<?> uploadFile(@RequestPart(value = "file")MultipartFile file) throws IOException, ServletException {
+        return ResponseEntity.ok(this.cloudStorageHelper.getImageUrl(file, "imageupload-8d680.appspot.com"));
     }
+
     @PostMapping("/uploadImage")
-    public ResponseEntity<?> uploadFileComponent(@RequestPart(value = "image")
-                                                 MultipartFile file) throws IOException, ServletException {
-        return ResponseEntity.ok(this.cloudStorageHelper.getImageUrl(file,"imageupload-8d680.appspot.com"));
+    public ResponseEntity<?> uploadFileComponent(@RequestPart(value = "image")MultipartFile file) throws IOException, ServletException {
+        return ResponseEntity.ok(this.cloudStorageHelper.getStorageFileDto(file, "imageupload-8d680.appspot.com"));
     }
 }
